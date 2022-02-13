@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 
 enum ActionType {
@@ -16,7 +14,6 @@ class ScreenAddNote extends StatelessWidget {
     this.id,
   }) : super(key: key);
 
-  @override
   Widget get saveButton => TextButton.icon(
         onPressed: () {
           switch (type) {
