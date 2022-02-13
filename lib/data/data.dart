@@ -1,3 +1,1 @@
-abstract class ApiCalls{
-  
-}
+abstract class ApiCalls {}
