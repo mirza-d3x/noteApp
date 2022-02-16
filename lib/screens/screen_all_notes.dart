@@ -10,8 +10,7 @@ class ScreenAllNotes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      final noteNew = await NoteDB.instance.getAllNotes();
-      print(noteNew);
+      await NoteDB.instance.getAllNotes();
     });
     return Scaffold(
       appBar: AppBar(
@@ -26,14 +25,14 @@ class ScreenAllNotes extends StatelessWidget {
       body: SafeArea(
           child: ValueListenableBuilder(
               valueListenable: NoteDB.instance.noteListNotifier,
-              builder: (context, List<NoteModel> noteNew, _) {
+              builder: (context, List<NoteModel> newNote, _) {
                 return GridView.count(
                   crossAxisCount: 2,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
                   padding: const EdgeInsets.all(20),
-                  children: List.generate(noteNew.length, (index) {
-                    final _note = noteNew[index];
+                  children: List.generate(newNote.length, (index) {
+                    final _note = NoteDB.instance.noteListNotifier.value[index];
 
                     if (_note.id == null) {
                       const SizedBox();
