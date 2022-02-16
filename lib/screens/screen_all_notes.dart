@@ -4,24 +4,14 @@ import 'package:note_app_sample/data/note_model/note_model.dart';
 import 'package:note_app_sample/screens/screen_add_notes.dart';
 import 'package:note_app_sample/widget/note_item.dart';
 
-class ScreenAllNotes extends StatefulWidget {
-  ScreenAllNotes({Key? key}) : super(key: key);
-
-  @override
-  State<ScreenAllNotes> createState() => _ScreenAllNotesState();
-}
-
-class _ScreenAllNotesState extends State<ScreenAllNotes> {
-  final List<NoteModel> noteList = [];
+class ScreenAllNotes extends StatelessWidget {
+  const ScreenAllNotes({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      final _noteList = await NoteDB().getAllNotes();
-      noteList.clear();
-      setState(() {
-        noteList.addAll(_noteList.reversed);
-      });
+      final noteNew = await NoteDB.instance.getAllNotes();
+      print(noteNew);
     });
     return Scaffold(
       appBar: AppBar(
@@ -34,24 +24,28 @@ class _ScreenAllNotesState extends State<ScreenAllNotes> {
         ),
       ),
       body: SafeArea(
-        child: GridView.count(
-          crossAxisCount: 2,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-          padding: const EdgeInsets.all(20),
-          children: List.generate(noteList.length, (index) {
-            final _note = noteList[index];
-            if (_note.id == null) {
-              const SizedBox();
-            }
-            return NoteItem(
-              id: _note.id!,
-              title: _note.title ?? 'No Title',
-              content: _note.content ?? 'No Content',
-            );
-          }),
-        ),
-      ),
+          child: ValueListenableBuilder(
+              valueListenable: NoteDB.instance.noteListNotifier,
+              builder: (context, List<NoteModel> noteNew, _) {
+                return GridView.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  padding: const EdgeInsets.all(20),
+                  children: List.generate(noteNew.length, (index) {
+                    final _note = noteNew[index];
+
+                    if (_note.id == null) {
+                      const SizedBox();
+                    }
+                    return NoteItem(
+                      id: _note.id!,
+                      title: _note.title ?? 'No Title',
+                      content: _note.content ?? 'No Content',
+                    );
+                  }),
+                );
+              })),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {

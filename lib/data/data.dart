@@ -1,6 +1,10 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:note_app_sample/data/get_all_notes_respo/get_all_notes_respo.dart';
 import 'package:note_app_sample/data/note_model/note_model.dart';
 import 'package:note_app_sample/data/url.dart';
@@ -13,8 +17,21 @@ abstract class ApiCalls {
 }
 
 class NoteDB extends ApiCalls {
+// singleturn
+
+  NoteDB._internal();
+
+  static NoteDB instance = NoteDB._internal();
+
+  NoteDB factory() {
+    return instance;
+  }
+  // end
+
   final dio = Dio();
   final url = Url();
+
+  ValueNotifier<List<NoteModel>> noteListNotifier = ValueNotifier([]);
 
   NoteDB() {
     dio.options = BaseOptions(
@@ -37,8 +54,8 @@ class NoteDB extends ApiCalls {
       print(e);
       return null;
     } catch (e) {
-      return null;
       print(e.toString());
+      return null;
     }
   }
 
@@ -49,16 +66,20 @@ class NoteDB extends ApiCalls {
   Future<List<NoteModel>> getAllNotes() async {
     final _result = await dio.get(url.baseUrl + url.getAllNote);
     if (_result.data != null) {
-      final _resultAsJson = jsonDecode(_result.data);
-      final getNoteResp = GetAllNotesRespo.fromJson(_resultAsJson);
+      // final _resultAsJson = jsonDecode(_result.data.toString());
+      final getNoteResp = GetAllNotesRespo.fromJson(_result.data);
+      noteListNotifier.value.clear();
+      noteListNotifier.value.addAll(getNoteResp.data.reversed);
       return getNoteResp.data;
     } else {
-      return _result.data!.data;
+      noteListNotifier.value.clear();
+      return [];
     }
   }
 
   @override
   Future<NoteModel?> updateNote(NoteModel value) async {
+    // ignore: todo
     // TODO: implement updateNote
     throw UnimplementedError();
   }

@@ -1,3 +1,6 @@
+// ignore_for_file: avoid_print
+
+
 import 'package:flutter/material.dart';
 import 'package:note_app_sample/data/data.dart';
 import 'package:note_app_sample/data/note_model/note_model.dart';
@@ -7,6 +10,7 @@ enum ActionType {
   editNote,
 }
 
+// ignore: must_be_immutable
 class ScreenAddNote extends StatelessWidget {
   final ActionType type;
   String? id;
